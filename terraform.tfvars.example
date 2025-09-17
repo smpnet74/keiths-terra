@@ -1,0 +1,20 @@
+civo_token                   = "your-civo-api-token"
+cluster_node_size            = "g4s.kube.medium"
+region                       = "PHX1"
+cluster_name_prefix          = "tf-template-"
+cluster_node_count           = 3
+
+# Firewall Access Configuration
+kubernetes_api_access        = ["0.0.0.0/0"]
+cluster_web_access          = ["0.0.0.0/0"]
+cluster_websecure_access    = ["0.0.0.0/0"]
+
+# Red Hat Developer Hub Configuration
+enable_rhdh                  = false
+rhdh_hostname               = ""  # Leave empty to auto-detect from gateway
+rhdh_namespace              = "rhdh"
+
+# Red Hat Registry Authentication (required for RHDH)
+redhat_username             = ""  # Your Red Hat account username
+redhat_password             = ""  # Your Red Hat account password
+redhat_email                = ""  # Your Red Hat account email
