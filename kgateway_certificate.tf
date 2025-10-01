@@ -38,7 +38,7 @@ resource "kubernetes_secret" "cloudflare_origin_cert_kgateway" {
   depends_on = [
     civo_kubernetes_cluster.cluster,
     time_sleep.wait_for_cluster,
-    helm_release.kgateway  # Wait for Kgateway to create the namespace
+    helm_release.kgateway # Wait for Kgateway to create the namespace
   ]
 }
 

@@ -65,23 +65,23 @@ resource "kubernetes_service_account" "rhdh" {
 
 # Install Red Hat Developer Hub using official OpenShift Helm chart
 resource "helm_release" "rhdh" {
-  count = var.enable_rhdh ? 1 : 0
+  count            = var.enable_rhdh ? 1 : 0
   name             = "rhdh"
   repository       = "https://charts.openshift.io/"
   chart            = "redhat-developer-hub"
-  version          = "1.7.0"  # Latest available version
+  version          = "1.7.0" # Latest available version
   namespace        = var.rhdh_namespace
   create_namespace = true
   atomic           = false
   cleanup_on_fail  = true
   wait             = true
-  timeout          = 900    # 15 minutes
+  timeout          = 900 # 15 minutes
 
   values = [
     yamlencode({
       # Global configuration
       global = {
-        host = local.rhdh_hostname
+        host             = local.rhdh_hostname
         imagePullSecrets = ["rhdh-pull-secret"]
       }
 
@@ -96,7 +96,7 @@ resource "helm_release" "rhdh" {
           type = "NodePort"
         }
         ingress = {
-          enabled = false  # We're using Gateway API instead
+          enabled = false # We're using Gateway API instead
         }
         backstage = {
           appConfig = {
@@ -127,7 +127,7 @@ resource "helm_release" "rhdh" {
                 }
               }
             }
-            signInPage = "guest"
+            signInPage                                 = "guest"
             dangerouslyAllowSignInWithoutUserInCatalog = true
             # Minimal catalog configuration to prevent digest errors
             catalog = {
@@ -141,8 +141,8 @@ resource "helm_release" "rhdh" {
             }
             # Disable problematic integrations
             integrations = {
-              github = []
-              gitlab = []
+              github    = []
+              gitlab    = []
               bitbucket = []
             }
             # Disable techdocs which can cause digest issues
@@ -181,14 +181,14 @@ resource "helm_release" "rhdh" {
     kubernetes_service_account.rhdh,
     helm_release.kgateway,
     kubectl_manifest.default_gateway,
-    kubectl_manifest.gateway_tls_certificate,
+    kubernetes_secret.cloudflare_origin_cert,
     data.kubernetes_service.gateway_lb
   ]
 }
 
 # Create ReferenceGrant to allow RHDH HTTPRoute to reference the Gateway
 resource "kubectl_manifest" "rhdh_reference_grant" {
-  count = var.enable_rhdh ? 1 : 0
+  count     = var.enable_rhdh ? 1 : 0
   yaml_body = <<-YAML
 apiVersion: gateway.networking.k8s.io/v1beta1
 kind: ReferenceGrant
@@ -213,7 +213,7 @@ spec:
 
 # Create HTTPRoute for RHDH to expose it through kgateway
 resource "kubectl_manifest" "rhdh_httproute" {
-  count = var.enable_rhdh ? 1 : 0
+  count     = var.enable_rhdh ? 1 : 0
   yaml_body = <<-YAML
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute

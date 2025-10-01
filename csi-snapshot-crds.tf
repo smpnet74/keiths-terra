@@ -18,6 +18,6 @@ resource "null_resource" "csi_snapshot_crds" {
 
 # Wait for CSI Snapshot CRDs to be established
 resource "time_sleep" "wait_for_csi_snapshot_crds" {
-  depends_on = [null_resource.csi_snapshot_crds]
+  depends_on      = [null_resource.csi_snapshot_crds]
   create_duration = "10s"
 }
