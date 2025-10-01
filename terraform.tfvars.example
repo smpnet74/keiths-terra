@@ -18,3 +18,9 @@ rhdh_namespace              = "rhdh"
 redhat_username             = ""  # Your Red Hat account username
 redhat_password             = ""  # Your Red Hat account password
 redhat_email                = ""  # Your Red Hat account email
+
+# Cloudflare Configuration
+domain_name                 = "your-domain.com"
+cloudflare_api_token        = "your-cloudflare-api-token"
+cloudflare_zone_id          = "your-cloudflare-zone-id"
+cloudflare_email            = "your-cloudflare-email"

@@ -132,65 +132,24 @@ spec:
   - name: https
     port: 443
     protocol: HTTPS
-    tls:
-      mode: Terminate
-      certificateRefs:
-      - name: default-gateway-tls
-        kind: Secret
     allowedRoutes:
       namespaces:
         from: All
+    tls:
+      mode: Terminate
+      certificateRefs:
+      - name: default-gateway-cert
+        kind: Secret
+        group: ""
   YAML
 
   depends_on = [
-    helm_release.kgateway
+    helm_release.kgateway,
+    kubernetes_secret.cloudflare_origin_cert,
+    kubernetes_secret.cloudflare_origin_cert_kgateway
   ]
 }
 
-# Create a self-signed TLS certificate for the Gateway
-resource "kubectl_manifest" "gateway_tls_certificate" {
-  yaml_body = <<-YAML
-apiVersion: v1
-kind: Secret
-metadata:
-  name: default-gateway-tls
-  namespace: default
-type: kubernetes.io/tls
-data:
-  tls.crt: ${base64encode(tls_self_signed_cert.gateway_cert.cert_pem)}
-  tls.key: ${base64encode(tls_private_key.gateway_key.private_key_pem)}
-  YAML
-
-  depends_on = [
-    tls_self_signed_cert.gateway_cert
-  ]
-}
-
-# Generate private key for TLS certificate
-resource "tls_private_key" "gateway_key" {
-  algorithm = "RSA"
-  rsa_bits  = 2048
-}
-
-# Generate self-signed certificate
-resource "tls_self_signed_cert" "gateway_cert" {
-  private_key_pem = tls_private_key.gateway_key.private_key_pem
-
-  subject {
-    common_name  = "*.lb.civo.com"
-    organization = "RHDH Development"
-  }
-
-  dns_names = [
-    "*.lb.civo.com",
-    "localhost"
-  ]
-
-  validity_period_hours = 8760 # 1 year
-
-  allowed_uses = [
-    "key_encipherment",
-    "digital_signature",
-    "server_auth",
-  ]
-}
+# Note: We're no longer using self-signed certificates
+# Instead, we're using Cloudflare Origin Certificates directly as a Kubernetes secret
+# The certificate configuration is in kgateway_certificate.tf

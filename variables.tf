@@ -92,3 +92,26 @@ variable "redhat_email" {
   type        = string
   default     = ""
 }
+
+# Cloudflare Configuration
+variable "cloudflare_api_token" {
+  description = "Cloudflare API token for DNS management"
+  type        = string
+  sensitive   = true
+}
+
+variable "cloudflare_zone_id" {
+  description = "Cloudflare Zone ID for the domain"
+  type        = string
+}
+
+variable "cloudflare_email" {
+  description = "Cloudflare account email"
+  type        = string
+}
+
+variable "domain_name" {
+  type        = string
+  description = "The domain name to use for the application"
+  default     = "your-domain.com"
+}

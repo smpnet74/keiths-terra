@@ -37,3 +37,8 @@ kubeconfig
 
 # Cilium values file generated during deployment
 cilium_values.yaml
+
+# SSL/TLS Certificates - keep these secret!
+certs/*.crt
+certs/*.key
+certs/*.pem

@@ -47,6 +47,12 @@ terraform {
       version = "~> 3.2.0"
     }
 
+    # Used for Cloudflare DNS management
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "5.5.0"
+    }
+
   }
 }
 
@@ -73,10 +79,8 @@ provider "kubernetes" {
   cluster_ca_certificate = base64decode(yamldecode(local_file.cluster-config.content)["clusters"][0]["cluster"]["certificate-authority-data"])
 }
 
-provider "kubectl" {
-  host                   = yamldecode(local_file.cluster-config.content)["clusters"][0]["cluster"]["server"]
-  cluster_ca_certificate = base64decode(yamldecode(local_file.cluster-config.content)["clusters"][0]["cluster"]["certificate-authority-data"])
-  client_certificate     = base64decode(yamldecode(local_file.cluster-config.content)["users"][0]["user"]["client-certificate-data"])
-  client_key             = base64decode(yamldecode(local_file.cluster-config.content)["users"][0]["user"]["client-key-data"])
-  load_config_file       = false
+# kubectl provider is already defined in kubectl_dependencies.tf
+
+provider "cloudflare" {
+  api_token = var.cloudflare_api_token
 }
